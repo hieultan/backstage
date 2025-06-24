@@ -72,6 +72,7 @@ import { defaultPreviewTemplate } from './components/scaffolder/defaultPreviewTe
 import { searchPage } from './components/search/SearchPage';
 import { providers } from './identityProviders';
 import { SignalsDisplay } from '@backstage/plugin-signals';
+import { ChainlitCopilot } from './components/copilot';
 import { techDocsPage } from './components/techdocs/TechDocsPage';
 import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
@@ -243,6 +244,7 @@ export default app.createRoot(
     <AppRouter>
       <VisitListener />
       <Root>{routes}</Root>
+      <ChainlitCopilot />
     </AppRouter>
   </>,
 );
