@@ -28,7 +28,6 @@ export function ChainlitCopilot() {
   const configApi = useApi(configApiRef);
 
   useEffect(() => {
-    let script: HTMLScriptElement | undefined;
     let cancelled = false;
 
     async function mount() {
@@ -39,16 +38,17 @@ export function ChainlitCopilot() {
         const baseUrl =
           configApi.getOptionalString('chainlit.baseUrl') ||
           'http://localhost:8000';
-        script = document.createElement('script');
-        script.src = `${baseUrl}/copilot/index.js`;
-        script.async = true;
-        script.onload = () => {
-          (window as any).mountChainlitWidget?.({
-            chainlitServer: baseUrl,
-            userJwt: token,
-          });
-        };
-        document.body.appendChild(script);
+
+        function tryMount() {
+          const mountFn = (window as any).mountChainlitWidget;
+          if (typeof mountFn === 'function') {
+            mountFn({ chainlitServer: baseUrl, userJwt: token });
+          } else {
+            setTimeout(tryMount, 100);
+          }
+        }
+
+        tryMount();
       } catch {
         /* ignore */
       }
@@ -57,9 +57,6 @@ export function ChainlitCopilot() {
     mount();
     return () => {
       cancelled = true;
-      if (script) {
-        document.body.removeChild(script);
-      }
     };
   }, [identityApi, configApi]);
 
